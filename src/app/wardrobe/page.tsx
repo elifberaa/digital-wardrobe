@@ -8,7 +8,7 @@ import { ref, deleteObject } from "firebase/storage";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast, Toaster } from "sonner";
-import { ArrowLeft, Plus, Trash2, Search, X } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Search } from "lucide-react";
 
 interface Item {
   id: string;
@@ -51,7 +51,7 @@ export default function WardrobePage() {
 
   const handleDelete = async (item: Item) => {
     const originalClothes = [...clothes];
-    setClothes((prev) => prev.filter((c) => c.id!== item.id)); // Optimistic UI
+    setClothes((prev) => prev.filter((c) => c.id!== item.id));
 
     toast("Kıyafet silindi", {
       action: {
@@ -64,15 +64,15 @@ export default function WardrobePage() {
       await deleteDoc(doc(db, "clothes", item.id));
       await deleteObject(ref(storage, item.imageUrl));
     } catch (error) {
-      setClothes(originalClothes); // Hata olursa geri al
+      setClothes(originalClothes);
       toast.error("Silinemedi, tekrar dene");
     }
   };
 
   const filteredClothes = useMemo(() => {
     return clothes
-     .filter(item => activeCategory === "Tümü" || item.category === activeCategory)
-     .filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    .filter(item => activeCategory === "Tümü" || item.category === activeCategory)
+    .filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
   }, [clothes, activeCategory, searchQuery]);
 
   if (loading) {
@@ -94,7 +94,6 @@ export default function WardrobePage() {
     <main className="min-h-screen bg-slate-50 p-4 md:p-8">
       <Toaster richColors position="bottom-center" />
       <div className="max-w-7xl mx-auto">
-
         <header className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
@@ -111,7 +110,6 @@ export default function WardrobePage() {
             </Link>
           </div>
 
-          {/* Arama + Filtre */}
           <div className="flex flex-col md:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -130,7 +128,7 @@ export default function WardrobePage() {
                   onClick={() => setActiveCategory(cat)}
                   className={`px-4 py-3 rounded-xl font-semibold whitespace-nowrap transition-all ${
                     activeCategory === cat
-                   ? "bg-slate-900 text-white"
+                  ? "bg-slate-900 text-white"
                     : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-100"
                   }`}
                 >
@@ -168,7 +166,6 @@ export default function WardrobePage() {
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
-
                   <div className="aspect-[3/4] w-full bg-slate-100 overflow-hidden">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
