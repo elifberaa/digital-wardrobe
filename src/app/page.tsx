@@ -31,7 +31,7 @@ export default function Home() {
 
   if (!user) {
     return (
-      <main className="min-h-screen flex-col items-center justify-center bg-gradient-to-br from-violet-50 via-white to-rose-50 p-6 overflow-hidden">
+      <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-violet-50 via-white to-rose-50 p-6 overflow-hidden">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -57,7 +57,6 @@ export default function Home() {
             </motion.button>
           </Link>
         </motion.div>
-
         <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-white to-transparent pointer-events-none" />
       </main>
     );
@@ -66,8 +65,6 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50/30 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
-
-        {/* Glass Header */}
         <motion.header
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -88,9 +85,7 @@ export default function Home() {
           </button>
         </motion.header>
 
-        {/* Bento Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
             <Link href="/wardrobe" className="group block h-full bg-white p-8 rounded-3xl border border-slate-100 hover:border-violet-200 hover:shadow-xl hover:shadow-violet-100/50 transition-all duration-300">
               <div className="w-14 h-14 bg-violet-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform">
@@ -123,7 +118,6 @@ export default function Home() {
               <p className="text-slate-500">Yeni aldığın parçayı 10 saniyede dolaba at.</p>
             </Link>
           </motion.div>
-
         </div>
       </div>
     </main>
