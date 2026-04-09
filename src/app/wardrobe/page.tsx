@@ -70,9 +70,21 @@ export default function WardrobePage() {
   };
 
   const filteredClothes = useMemo(() => {
+    const normalize = (str: string) => 
+      str.toLowerCase()
+         .replace(/ı/g, 'i')
+         .replace(/ğ/g, 'g')
+         .replace(/ü/g, 'u')
+         .replace(/ş/g, 's')
+         .replace(/ö/g, 'o')
+         .replace(/ç/g, 'c');
+
     return clothes
-    .filter(item => activeCategory === "Tümü" || item.category === activeCategory)
-    .filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
+      .filter(item => {
+        if (activeCategory === "Tümü") return true;
+        return normalize(item.category) === normalize(activeCategory);
+      })
+      .filter(item => normalize(item.name).includes(normalize(searchQuery)));
   }, [clothes, activeCategory, searchQuery]);
 
   if (loading) {
