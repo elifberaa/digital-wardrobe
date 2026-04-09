@@ -1,65 +1,71 @@
-import Image from "next/image";
+"use client";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged, signOut, User } from "firebase/auth";
 
 export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Yüklenme ekranı
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-500 font-medium">Sistem Yükleniyor...</div>;
+  }
+
+  // 1. Durum: Kullanıcı giriş yapmamışsa
+  if (!user) {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-6">
+        <h1 className="text-5xl font-extrabold text-slate-900 mb-6 text-center tracking-tight">Dijital Gardırobun</h1>
+        <p className="text-slate-600 mb-10 text-center max-w-md text-lg">Ne giyeceğini düşünme, dolabını cebinde taşı. Hemen giriş yap ve kıyafetlerini dijitalleştir.</p>
+        <Link href="/auth" className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-full font-bold shadow-lg transition-all">
+          Giriş Yap veya Kayıt Ol
+        </Link>
       </main>
-    </div>
+    );
+  }
+
+  // 2. Durum: Kullanıcı giriş yapmışsa (Ana Menü)
+  return (
+    <main className="min-h-screen bg-slate-50 p-6 md:p-12">
+      <div className="max-w-5xl mx-auto">
+        <header className="flex flex-col md:flex-row justify-between items-center mb-12 gap-4">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-slate-800 tracking-tight">Hoş Geldin! 👋</h1>
+            <p className="text-slate-500 mt-2">Bugün ne giymek istersin?</p>
+          </div>
+          <button onClick={() => signOut(auth)} className="text-red-500 font-semibold hover:bg-red-50 px-5 py-2.5 rounded-xl transition-colors">
+            Çıkış Yap
+          </button>
+        </header>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Link href="/wardrobe" className="group bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-all">
+            <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <span className="text-3xl">👗</span>
+            </div>
+            <h2 className="text-2xl font-bold text-slate-800 mb-2">Dolabım</h2>
+            <p className="text-slate-500">Kıyafetlerini görüntüle ve düzenle.</p>
+          </Link>
+
+          <Link href="/ai-assistant" className="group bg-gradient-to-br from-indigo-600 to-purple-600 p-8 rounded-3xl shadow-md hover:shadow-lg transition-all text-white">
+            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <span className="text-3xl">✨</span>
+            </div>
+            <h2 className="text-2xl font-bold mb-2">AI Kombin Asistanı</h2>
+            <p className="text-indigo-100">Yapay zeka senin için kombin üretsin.</p>
+          </Link>
+        </div>
+      </div>
+    </main>
   );
 }
