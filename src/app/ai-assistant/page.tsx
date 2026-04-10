@@ -52,7 +52,7 @@ export default function AIAssistantPage() {
     return () => unsubscribe();
   }, [router]);
 
-  // 2. Adım: AI ile Görsel Konuşma (Simülasyon)
+  // 2. Adım: Gerçek Gemini AI İsteği
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (clothes.length < 2) {
@@ -61,38 +61,47 @@ export default function AIAssistantPage() {
     }
 
     setIsGenerating(true);
-    setAiRecommendation(null); // Eski önerileri temizle
+    setAiRecommendation(null); 
 
-    // (Prompt Engineering mantığı Console'da duruyor ama kodumuz görsel veri üretecek)
-    console.log("Arka planda AI'a planınız giti:", occasion);
+    try {
+      // Backend API'mize istek atıyoruz
+      const response = await fetch("/api/gemini-outfit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ occasion, clothes })
+      });
 
-    // Gerçek API bağlayana kadar 2 saniyelik bir bekleme simülasyonu
-    setTimeout(() => {
-      // Basic simülasyon logic: Sadece rastgele kombinler oluştur.
-      // (Test için dolabındaki ilk ve son kıyafetleri kullanacağız ama bu sefer OBJESİNİ vereceğiz)
-      const combo1Items = [clothes[0], clothes[1]].filter(Boolean); // null/undefined kontrolü
-      const combo2Items = [clothes[clothes.length-1], clothes[0]].filter(Boolean);
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error || "Oluşturma başarısız oldu.");
+      }
 
-   // Simüle edilmiş yapısal AI cevabı (TÜRKÇE ve DAHA SAMİMİ)
-      const mockResult = {
-        generalRationale: `"${occasion}" planın için dolabındaki ${clothes.length} parçayı hızlıca gözden geçirdim ve senin için harika hissettirecek birkaç kombin hazırladım! ✨ Planın için:`,
-        combos: [
-          {
-            title: "🌟 1. Kombin: Rahat & Şık",
-            description: `"${occasion}" için ${combo1Items[0]?.name || "bu parçayı"} ve ${combo1Items[1]?.name || "bunu"} bir araya getirdim. Bu ikili, gün boyu rahat etmeni sağlarken aynı zamanda çok çaba harcamamış ama harika görünen (effortless) o havayı yakalamanı sağlayacak.`,
-            items: combo1Items
-          },
-          {
-            title: "👟 2. Kombin: İddialı Alternatif",
-            description: `Eğer "${occasion}" planında biraz daha dikkat çekmek istersen, dolabının yıldızı olan ${combo2Items[0]?.name || "bu parçayı"} merkeze alabiliriz. Sade aksesuarlarla desteklediğinde oldukça güçlü bir duruş sergileyeceksin.`,
-            items: combo2Items
-          }
-        ].filter(c => c.items.length > 0)
-      };
+      const aiResponse = await response.json();
 
-      setAiRecommendation(mockResult); // State'i yeni obje ile güncelle
+      // Dönen JSON datasında, `itemIds` listesindeki ID'leri kullanarak orjinal clothes objeleriyle mapliyoruz
+      const mappedCombos = aiResponse.combos.map((combo: any) => {
+        const itemObjects = combo.itemIds
+          .map((id: string) => clothes.find(c => c.id === id))
+          .filter(Boolean); // undefined olanları filtrele
+        
+        return {
+          title: combo.title,
+          description: combo.description,
+          items: itemObjects
+        } as AiCombination;
+      }).filter((c: AiCombination) => c.items.length > 0);
+
+      setAiRecommendation({
+        generalRationale: aiResponse.generalRationale,
+        combos: mappedCombos
+      });
+
+    } catch (error: any) {
+      console.error(error);
+      alert("Yapay zeka asistanı bir hata ile karşılaştı: " + error.message);
+    } finally {
       setIsGenerating(false);
-    }, 2000);
+    }
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-500 font-medium">Yapay Zeka Uyanıyor...</div>;
