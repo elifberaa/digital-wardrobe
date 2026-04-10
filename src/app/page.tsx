@@ -4,7 +4,7 @@ import Link from "next/link";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { motion } from "framer-motion";
-import { LogOut, User, Shirt, Plus, Wand2 } from "lucide-react";
+import { LogOut, User as UserIcon, Shirt, Plus, Wand2 } from "lucide-react";
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
@@ -78,7 +78,7 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-1 md:gap-2">
             <Link href="/profile" className="hidden md:flex items-center gap-2 text-slate-500 hover:text-violet-600 font-medium px-4 py-2.5 rounded-xl hover:bg-violet-50 transition-all">
-              <User className="w-4 h-4" />
+              <UserIcon className="w-4 h-4" />
               <span>Profilim</span>
             </Link>
             <button
