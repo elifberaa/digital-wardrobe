@@ -105,9 +105,14 @@ export default function WardrobePage() {
               <h1 className="text-2xl md:text-3xl font-black">Dolabım</h1>
               <span className="px-2.5 py-1 bg-violet-100 text-violet-700 text-xs font-bold rounded-full">{clothes.length}</span>
             </div>
-            <Link href="/add-item" className="hidden md:flex items-center gap-2 bg-slate-900 text-white px-4 py-2.5 rounded-xl font-semibold">
-              <Plus className="w-4 h-4" /> Ekle
-            </Link>
+            <div className="hidden md:flex items-center gap-3">
+              <Link href="/profile" className="flex items-center gap-2 text-slate-600 hover:text-violet-600 font-semibold px-4 py-2.5 rounded-xl border border-slate-200 hover:border-violet-200 hover:bg-violet-50 transition-all">
+                <User className="w-4 h-4" /> Profilim
+              </Link>
+              <Link href="/add-item" className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2.5 rounded-xl font-semibold">
+                <Plus className="w-4 h-4" /> Ekle
+              </Link>
+            </div>
           </div>
 
           {/* Arama */}

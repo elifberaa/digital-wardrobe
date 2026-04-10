@@ -4,7 +4,7 @@ import Link from "next/link";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { motion } from "framer-motion";
-import { LogOut, Sparkles, Shirt, Plus, Wand2 } from "lucide-react";
+import { LogOut, User, Shirt, Plus, Wand2 } from "lucide-react";
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
@@ -76,13 +76,19 @@ export default function Home() {
             </h1>
             <p className="text-sm text-slate-500">Bugün nasıl hissediyorsun?</p>
           </div>
-          <button
-            onClick={() => signOut(auth)}
-            className="flex items-center gap-2 text-slate-500 hover:text-red-500 font-medium px-4 py-2.5 rounded-xl hover:bg-red-50 transition-all"
-          >
-            <LogOut className="w-4 h-4" />
-            <span className="hidden md:inline">Çıkış</span>
-          </button>
+          <div className="flex items-center gap-1 md:gap-2">
+            <Link href="/profile" className="hidden md:flex items-center gap-2 text-slate-500 hover:text-violet-600 font-medium px-4 py-2.5 rounded-xl hover:bg-violet-50 transition-all">
+              <User className="w-4 h-4" />
+              <span>Profilim</span>
+            </Link>
+            <button
+              onClick={() => signOut(auth)}
+              className="flex items-center gap-2 text-slate-500 hover:text-red-500 font-medium px-4 py-2.5 rounded-xl hover:bg-red-50 transition-all"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="hidden md:inline">Çıkış</span>
+            </button>
+          </div>
         </motion.header>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
