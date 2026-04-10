@@ -18,7 +18,7 @@ interface Item {
   imageUrl: string;
 }
 
-const CATEGORIES = ["Tümü", "Üst", "Alt", "Dış Giyim", "Ayakkabı", "Aksesuar"];
+const CATEGORIES = ["Tümü", "Üst", "Alt", "Dış Giyim", "Elbise", "Ayakkabı", "Aksesuar"];
 
 export default function WardrobePage() {
   const [clothes, setClothes] = useState<Item[]>([]);
@@ -56,8 +56,26 @@ export default function WardrobePage() {
 
   const filteredClothes = useMemo(() => {
     const n = (s: string) => s.toLowerCase().replace(/ı/g,'i').replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ö/g,'o').replace(/ç/g,'c');
+    
+    const isCategoryMatch = (itemCat: string, activeCat: string) => {
+      if (activeCat === "Tümü") return true;
+      const mapping: Record<string, string[]> = {
+        "Üst": ["tişört", "kazak / sweatshirt"],
+        "Alt": ["pantolon"],
+        "Dış Giyim": ["ceket / mont"],
+        "Elbise": ["elbise"],
+        "Ayakkabı": ["ayakkabı"],
+        "Aksesuar": ["aksesuar"]
+      };
+      const targets = mapping[activeCat];
+      if (targets) {
+        return targets.some(target => n(itemCat) === n(target));
+      }
+      return n(itemCat) === n(activeCat);
+    };
+
     return clothes
-     .filter(i => activeCategory === "Tümü" || n(i.category) === n(activeCategory))
+     .filter(i => isCategoryMatch(i.category, activeCategory))
      .filter(i => n(i.name).includes(n(searchQuery)));
   }, [clothes, activeCategory, searchQuery]);
 
